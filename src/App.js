@@ -1,12 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {
-    BrowserRouter as Router,
-    Switch,
-    Route,
-    useParams
-} from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch, useParams} from "react-router-dom";
 
 function App () {
     return (
@@ -15,10 +10,7 @@ function App () {
                 <h1>Weather</h1>
                 <Router>
                     <Switch>
-                        <Route path="/:id">
-                            <Location/>
-                        </Route>
-
+                        <Route path="/:id" component={RenderDiffs}/>
                         <Route path="/">
                             <RenderLocations/>
                         </Route>
@@ -42,7 +34,7 @@ function App () {
 }
 
 function Location () {
-    let { id } = useParams()
+    let {id} = useParams()
     return (<h2>Not implemented {id}</h2>)
 }
 
@@ -65,10 +57,37 @@ class RenderLocations extends React.Component {
         fetch("api/locations")
             .then(response => response.json())
             .then(locations => {
-             this.setState({items : locations})
-        })
+                this.setState({items: locations})
+            })
     }
 }
 
+class RenderDiffs extends React.Component {
+
+    constructor (props) {
+        super(props)
+        this.id = props.match.params.id
+        this.state = {diffs: []}
+    }
+
+    render () {
+        return (<div>
+            {this.state.diffs.map(item => {
+                let weather = item.weather
+                return (
+                    <h5>{weather.timestamp} {weather.temperature}</h5>
+                );
+            })}
+        </div>)
+    }
+
+    componentDidMount () {
+        fetch(`api/${this.id}/diffs`)
+            .then(response => response.json())
+            .then(values => {
+                this.setState({diffs: values})
+            })
+    }
+}
 
 export default App;
