@@ -33,11 +33,6 @@ function App () {
     );
 }
 
-function Location () {
-    let {id} = useParams()
-    return (<h2>Not implemented {id}</h2>)
-}
-
 class RenderLocations extends React.Component {
 
     constructor (props) {
@@ -75,7 +70,10 @@ class RenderDiffs extends React.Component {
             {this.state.diffs.map(item => {
                 let weather = item.weather
                 return (
-                    <h5>{weather.timestamp} {weather.temperature}</h5>
+                    <div>
+                        <h5>{weather.timestamp} {weather.temperature}</h5>
+                        <RenderInnerDiffs diffs={item.diffs}/>
+                    </div>
                 );
             })}
         </div>)
@@ -88,6 +86,14 @@ class RenderDiffs extends React.Component {
                 this.setState({diffs: values})
             })
     }
+}
+
+function RenderInnerDiffs (props) {
+    return (<div>
+        {props.diffs.map(item =>
+                             <div>{item.timeDelta} {item.temperatureDelta}</div>
+        )}
+    </div>)
 }
 
 export default App;
