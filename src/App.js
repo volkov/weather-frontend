@@ -62,7 +62,7 @@ class RenderLocations extends React.Component {
     }
 
     componentDidMount () {
-        fetch("/locations")
+        fetch("api/locations")
             .then(response => response.json())
             .then(locations => {
              this.setState({items : locations})
