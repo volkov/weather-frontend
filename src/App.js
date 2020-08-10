@@ -99,6 +99,9 @@ class RenderDiffs extends React.Component {
                     style: {colors: '#FFFFFF'}
                 }
             },
+            tooltip: {
+                theme: 'dark'
+            }
 
         };
     }
