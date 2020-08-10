@@ -1,7 +1,7 @@
 import React from 'react';
 import logo from './logo.svg';
 import './App.css';
-import {BrowserRouter as Router, Route, Switch, useParams} from "react-router-dom";
+import {BrowserRouter as Router, Route, Switch, Link} from "react-router-dom";
 
 function App () {
     return (
@@ -43,7 +43,7 @@ class RenderLocations extends React.Component {
     render () {
         return (<div>
             {this.state.items.map(item => (
-                <h2><a href={item}>{item}</a></h2>
+                <h2><Link to={`${item}`}>{item}</Link></h2>
             ))}
         </div>)
     }
