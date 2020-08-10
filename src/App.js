@@ -1,7 +1,7 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
-import {BrowserRouter as Router, Route, Switch, Link} from "react-router-dom";
+import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
+import Chart from 'react-apexcharts'
 
 function App () {
     return (
@@ -16,18 +16,6 @@ function App () {
                         </Route>
                     </Switch>
                 </Router>
-                <img src={logo} className="App-logo" alt="logo"/>
-                <p>
-                    Edit <code>src/App.js</code> and save to reload.
-                </p>
-                <a
-                    className="App-link"
-                    href="https://reactjs.org"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                >
-                    Learn React
-                </a>
             </header>
         </div>
     );
@@ -62,17 +50,77 @@ class RenderDiffs extends React.Component {
     constructor (props) {
         super(props)
         this.id = props.match.params.id
-        this.state = {diffs: []}
+        this.state = {
+            diffs: [],
+            series: this.getSeries([]),
+            options: this.getOptions([]),
+        }
+    }
+
+    getSeries (data) {
+        return [{
+            name: 'Temperature',
+            data: data
+        }
+        ];
+    }
+
+    getOptions () {
+        return {
+            chart: {
+                type: 'line',
+                height: 350,
+                zoom: {
+                    type: 'x',
+                    enabled: true,
+                    autoScaleYaxis: true
+                },
+                toolbar: {
+                    autoSelected: 'zoom'
+                }
+            },
+
+            plotOptions: {
+                bar: {
+                    horizontal: false,
+                    columnWidth: '55%',
+                },
+            },
+            dataLabels: {
+                enabled: false,
+                style: {
+                    colors: ['#FFFFFF', '#FFFFFF', '#FFFFFF']
+                }
+            },
+            xaxis: {
+                type: 'datetime',
+                labels: {
+                    style: {colors: '#FFFFFF'}
+                }
+            },
+            yaxis: {
+                title: {
+                    text: 'celsius'
+                },
+                labels: {
+                    style: {colors: '#FFFFFF'}
+                }
+            },
+
+        };
     }
 
     render () {
         return (<div>
+            <div id="chart">
+                <Chart options={this.state.options} series={this.state.series} type="bar" height={350}/>
+            </div>
+
             {this.state.diffs.map(item => {
                 let weather = item.weather
                 return (
                     <div>
                         <h5>{weather.timestamp} {weather.temperature}</h5>
-                        <RenderInnerDiffs diffs={item.diffs}/>
                     </div>
                 );
             })}
@@ -83,17 +131,19 @@ class RenderDiffs extends React.Component {
         fetch(`api/${this.id}/diffs`)
             .then(response => response.json())
             .then(values => {
-                this.setState({diffs: values})
+                this.setState(
+                    {
+                        diffs: values,
+                        series: this.getSeries(
+                            values.map(
+                                item =>
+                                    [item.weather.timestamp, item.weather.temperature]
+                            )
+                        )
+                    }
+                )
             })
     }
-}
-
-function RenderInnerDiffs (props) {
-    return (<div>
-        {props.diffs.map(item =>
-                             <div>{item.timeDelta} {item.temperatureDelta}</div>
-        )}
-    </div>)
 }
 
 export default App;
