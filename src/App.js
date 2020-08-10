@@ -79,18 +79,11 @@ class RenderDiffs extends React.Component {
                     autoSelected: 'zoom'
                 }
             },
-
-            plotOptions: {
-                bar: {
-                    horizontal: false,
-                    columnWidth: '55%',
-                },
+            stroke: {
+                curve: 'smooth'
             },
             dataLabels: {
                 enabled: false,
-                style: {
-                    colors: ['#FFFFFF', '#FFFFFF', '#FFFFFF']
-                }
             },
             xaxis: {
                 type: 'datetime',
@@ -113,7 +106,7 @@ class RenderDiffs extends React.Component {
     render () {
         return (<div>
             <div id="chart">
-                <Chart options={this.state.options} series={this.state.series} type="bar" height={350}/>
+                <Chart options={this.state.options} series={this.state.series} type="area" height={350}/>
             </div>
 
             {this.state.diffs.map(item => {
