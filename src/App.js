@@ -52,19 +52,24 @@ class RenderDiffs extends React.Component {
         this.id = props.match.params.id
         this.state = {
             diffs: [],
-            series: this.getSeries([], []),
+            series: this.getSeries([], [], []),
             options: this.getOptions([]),
         }
     }
 
-    getSeries (data, forecast) {
-        return [{
-            name: 'Temperature',
-            data: data
-        },
+    getSeries (data, forecast, forecast3) {
+        return [
             {
-                name: 'Forecast',
+                name: 'Temperature',
+                data: data
+            },
+            {
+                name: 'Forecast 1d',
                 data: forecast
+            },
+            {
+                name: 'Forecast 3d',
+                data: forecast3
             }
 
         ];
@@ -124,9 +129,11 @@ class RenderDiffs extends React.Component {
             .then(response => response.json())
         let forecast = fetch(`api/${this.id}/forecast?duration=P1D`)
             .then(response => response.json())
+        let forecast3 = fetch(`api/${this.id}/forecast?duration=P3D`)
+            .then(response => response.json())
 
-        Promise.all([real, forecast])
-            .then(([real, forecast]) => {
+        Promise.all([real, forecast, forecast3])
+            .then(([real, forecast, forecast3]) => {
                 this.setState(
                     {
                         series: this.getSeries(
@@ -135,6 +142,10 @@ class RenderDiffs extends React.Component {
                                     [weather.timestamp, weather.temperature]
                             ),
                             forecast.map(
+                                weather =>
+                                    [weather.timestamp, weather.temperature]
+                            ),
+                            forecast3.map(
                                 weather =>
                                     [weather.timestamp, weather.temperature]
                             )
