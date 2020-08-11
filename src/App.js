@@ -52,16 +52,21 @@ class RenderDiffs extends React.Component {
         this.id = props.match.params.id
         this.state = {
             diffs: [],
-            series: this.getSeries([]),
+            series: this.getSeries([], []),
             options: this.getOptions([]),
         }
     }
 
-    getSeries (data) {
+    getSeries (data, forecast) {
         return [{
             name: 'Temperature',
             data: data
-        }
+        },
+            {
+                name: 'Forecast',
+                data: forecast
+            }
+
         ];
     }
 
@@ -111,29 +116,27 @@ class RenderDiffs extends React.Component {
             <div id="chart">
                 <Chart options={this.state.options} series={this.state.series} type="area" height={350}/>
             </div>
-
-            {this.state.diffs.map(item => {
-                let weather = item.weather
-                return (
-                    <div>
-                        <h5>{weather.timestamp} {weather.temperature}</h5>
-                    </div>
-                );
-            })}
         </div>)
     }
 
     componentDidMount () {
-        fetch(`api/${this.id}/diffs`)
+        let real = fetch(`api/${this.id}/forecast`)
             .then(response => response.json())
-            .then(values => {
+        let forecast = fetch(`api/${this.id}/forecast?duration=P1D`)
+            .then(response => response.json())
+
+        Promise.all([real, forecast])
+            .then(([real, forecast]) => {
                 this.setState(
                     {
-                        diffs: values,
                         series: this.getSeries(
-                            values.map(
-                                item =>
-                                    [item.weather.timestamp, item.weather.temperature]
+                            real.map(
+                                weather =>
+                                    [weather.timestamp, weather.temperature]
+                            ),
+                            forecast.map(
+                                weather =>
+                                    [weather.timestamp, weather.temperature]
                             )
                         )
                     }
