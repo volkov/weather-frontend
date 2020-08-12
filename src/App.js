@@ -31,7 +31,7 @@ class RenderLocations extends React.Component {
     render () {
         return (<div>
             {this.state.items.map(item => (
-                <h2><Link to={`${item}`}>{item}</Link></h2>
+                <h2><Link to={`${item.id}`}>{item.name}</Link></h2>
             ))}
         </div>)
     }
