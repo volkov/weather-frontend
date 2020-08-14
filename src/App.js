@@ -7,11 +7,11 @@ function App () {
     return (
         <div className="App">
             <header className="App-header">
-                <h1>Weather</h1>
                 <Router>
                     <Switch>
                         <Route path="/:id" component={RenderDiffs}/>
                         <Route path="/">
+                            <h1>Weather</h1>
                             <RenderLocations/>
                         </Route>
                     </Switch>
@@ -51,6 +51,7 @@ class RenderDiffs extends React.Component {
         super(props)
         this.id = props.match.params.id
         this.state = {
+            location: "Loading...",
             diffs: [],
             series: this.getSeries([], [], []),
             options: this.getOptions([]),
@@ -117,11 +118,16 @@ class RenderDiffs extends React.Component {
     }
 
     render () {
-        return (<div>
-            <div id="chart">
-                <Chart options={this.state.options} series={this.state.series} type="area" height={350}/>
-            </div>
-        </div>)
+        return (
+            <>
+                <h1>{this.state.location}</h1>
+                <div>
+                    <div id="chart">
+                        <Chart options={this.state.options} series={this.state.series} type="area" height={350}/>
+                    </div>
+                </div>
+            </>
+        )
     }
 
     componentDidMount () {
@@ -153,6 +159,8 @@ class RenderDiffs extends React.Component {
                     }
                 )
             })
+
+        fetch(`api/location/${this.id}`).then(response => response.json()).then(location => this.setState({location: location.name}))
     }
 }
 
