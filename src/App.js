@@ -2,12 +2,23 @@ import React from 'react';
 import './App.css';
 import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
 import Chart from 'react-apexcharts'
+import {Box, Flex, Text} from 'rebass'
 
 function App () {
     return (
-        <div className="App">
-            <header className="App-header">
-                <Router>
+
+        <Router>
+            <Flex
+                px={2}
+                color='white'
+                bg='black'
+                alignItems='center'>
+                <Text p={2} fontWeight='bold'>Weather</Text>
+                {/*<Box mx='auto'/>*/}
+                <Link to='/'>List</Link>
+            </Flex>
+            <div className="App">
+                <header className="App-header">
                     <Switch>
                         <Route path="/:id" component={RenderDiffs}/>
                         <Route path="/">
@@ -15,9 +26,10 @@ function App () {
                             <RenderLocations/>
                         </Route>
                     </Switch>
-                </Router>
-            </header>
-        </div>
+                </header>
+            </div>
+        </Router>
+
     );
 }
 
