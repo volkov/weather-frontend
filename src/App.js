@@ -2,7 +2,7 @@ import React from 'react';
 import {BrowserRouter as Router, Link as ReactLink, Route, Switch} from "react-router-dom";
 import Chart from 'react-apexcharts'
 
-import {Box, ChakraProvider, CSSReset, Grid, Link} from '@chakra-ui/core';
+import {Alert, AlertIcon, Box, ChakraProvider, CSSReset, Grid, Link, Spinner} from '@chakra-ui/core';
 
 import theme from '@chakra-ui/theme';
 import Header from './header';
@@ -46,14 +46,18 @@ class RenderLocations extends React.Component {
 
     constructor (props) {
         super(props)
-        this.state = {items: ["Loading..."]}
+        this.state = {items: [], loading: true, error: false}
     }
 
     render () {
         return (<div>
-            {this.state.items.map(item => (
-                <h1><Link to={`${item.id}`} color="teal.500" as={ReactLink}>{item.name}</Link></h1>
-            ))}
+            {
+                this.state.loading ? (<Spinner/>) :
+                this.state.error ? (<Alert status="error"><AlertIcon/>There was an error processing your request</Alert>) :
+                this.state.items.map(item => (
+                    <h1><Link to={`${item.id}`} color="teal.500" as={ReactLink}>{item.name}</Link></h1>
+                ))
+            }
         </div>)
     }
 
@@ -62,6 +66,12 @@ class RenderLocations extends React.Component {
             .then(response => response.json())
             .then(locations => {
                 this.setState({items: locations})
+            })
+            .catch(() => {
+                this.setState({error: true})
+            })
+            .finally(() => {
+                this.setState({loading: false})
             })
         document.title = "Weather: locations"
     }
@@ -113,7 +123,7 @@ class RenderDiffs extends React.Component {
                 toolbar: {
                     autoSelected: 'zoom'
                 },
-                animations: { enabled: false}
+                animations: {enabled: false}
             },
             stroke: {
                 curve: 'smooth'
