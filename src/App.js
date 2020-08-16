@@ -1,33 +1,42 @@
 import React from 'react';
-import './App.css';
-import {BrowserRouter as Router, Link, Route, Switch} from "react-router-dom";
+import {BrowserRouter as Router, Link as ReactLink, Route, Switch} from "react-router-dom";
 import Chart from 'react-apexcharts'
-import {Box, Flex, Text} from 'rebass'
+
+import {Box, ChakraProvider, CSSReset, Grid, Link} from '@chakra-ui/core';
+
+import theme from '@chakra-ui/theme';
+import Header from './header';
 
 function App () {
     return (
 
         <Router>
-            <Flex
-                px={2}
-                color='white'
-                bg='black'
-                alignItems='center'>
-                <Text p={2} fontWeight='bold'>Weather</Text>
-                {/*<Box mx='auto'/>*/}
-                <Link to='/'>List</Link>
-            </Flex>
-            <div className="App">
-                <header className="App-header">
-                    <Switch>
-                        <Route path="/:id" component={RenderDiffs}/>
-                        <Route path="/">
-                            <h1>Weather</h1>
-                            <RenderLocations/>
-                        </Route>
-                    </Switch>
-                </header>
-            </div>
+            <ChakraProvider theme={theme}>
+                <CSSReset/>
+                <Header/>
+                <Box textAlign="center" fontSize="xl">
+                    <Grid
+                        minH="100vh"
+                        p={3}
+                        direction="column"
+                        align="center"
+                        justify="center"
+                    >
+
+
+                        <div className="App">
+                            <header className="App-header">
+                                <Switch>
+                                    <Route path="/:id" component={RenderDiffs}/>
+                                    <Route path="/">
+                                        <RenderLocations/>
+                                    </Route>
+                                </Switch>
+                            </header>
+                        </div>
+                    </Grid>
+                </Box>
+            </ChakraProvider>
         </Router>
 
     );
@@ -43,7 +52,7 @@ class RenderLocations extends React.Component {
     render () {
         return (<div>
             {this.state.items.map(item => (
-                <h2><Link to={`${item.id}`}>{item.name}</Link></h2>
+                <h1><Link to={`${item.id}`} color="teal.500" as={ReactLink}>{item.name}</Link></h1>
             ))}
         </div>)
     }
