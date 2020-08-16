@@ -65,15 +65,17 @@ class RenderDiffs extends React.Component {
         this.state = {
             location: "Loading...",
             diffs: [],
-            series: this.getSeries([], [], []),
-            options: this.getOptions([]),
+            temperatureSeries: this.getSeries([], [], [], 'Temperature'),
+            rainSeries: this.getSeries([], [], [], 'Rain'),
+            temperatureOptions: this.getOptions(),
+            rainOptions: this.getOptions("mm in 3h")
         }
     }
 
-    getSeries (data, forecast, forecast3) {
+    getSeries (data, forecast, forecast3, name = 'Temperature') {
         return [
             {
-                name: 'Temperature',
+                name: name,
                 data: data
             },
             {
@@ -88,7 +90,7 @@ class RenderDiffs extends React.Component {
         ];
     }
 
-    getOptions () {
+    getOptions (yTitle = 'celsius') {
         return {
             chart: {
                 type: 'line',
@@ -117,7 +119,7 @@ class RenderDiffs extends React.Component {
             },
             yaxis: {
                 title: {
-                    text: 'celsius'
+                    text: yTitle
                 },
                 labels: {
                     style: {colors: '#FFFFFF'}
@@ -126,7 +128,6 @@ class RenderDiffs extends React.Component {
             tooltip: {
                 theme: 'dark'
             }
-
         };
     }
 
@@ -136,7 +137,9 @@ class RenderDiffs extends React.Component {
                 <h1>{this.state.location}</h1>
                 <div>
                     <div id="chart">
-                        <Chart options={this.state.options} series={this.state.series} type="area" height={350}/>
+
+                        <Chart options={this.state.temperatureOptions} series={this.state.temperatureSeries} type="area" height={350}/>
+                        <Chart options={this.state.rainOptions} series={this.state.rainSeries} type="area" height={350}/>
                     </div>
                 </div>
             </>
@@ -155,20 +158,27 @@ class RenderDiffs extends React.Component {
             .then(([real, forecast, forecast3]) => {
                 this.setState(
                     {
-                        series: this.getSeries(
-                            real.map(
-                                weather =>
-                                    [weather.timestamp, weather.temperature]
-                            ),
-                            forecast.map(
-                                weather =>
-                                    [weather.timestamp, weather.temperature]
-                            ),
-                            forecast3.map(
-                                weather =>
-                                    [weather.timestamp, weather.temperature]
-                            )
-                        )
+                        temperatureSeries: this.getSeries(real.map(
+                            weather =>
+                                [weather.timestamp, weather.temperature]
+                        ), forecast.map(
+                            weather =>
+                                [weather.timestamp, weather.temperature]
+                        ), forecast3.map(
+                            weather =>
+                                [weather.timestamp, weather.temperature]
+                        ), 'Temperature'),
+                        rainSeries: this.getSeries(real.map(
+                            weather =>
+                                [weather.timestamp, weather.rain]
+                        ), forecast.map(
+                            weather =>
+                                [weather.timestamp, weather.rain]
+                        ), forecast3.map(
+                            weather =>
+                                [weather.timestamp, weather.rain]
+                        ), 'Rain')
+
                     }
                 )
             })
