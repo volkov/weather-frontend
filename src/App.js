@@ -54,6 +54,7 @@ class RenderLocations extends React.Component {
             .then(locations => {
                 this.setState({items: locations})
             })
+        document.title = "Weather: locations"
     }
 }
 
@@ -183,7 +184,10 @@ class RenderDiffs extends React.Component {
                 )
             })
 
-        fetch(`api/location/${this.id}`).then(response => response.json()).then(location => this.setState({location: location.name}))
+        fetch(`api/location/${this.id}`).then(response => response.json()).then(location => {
+            this.setState({location: location.name});
+            document.title = "Weather: " + location.name
+        })
     }
 }
 
