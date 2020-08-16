@@ -100,7 +100,8 @@ class RenderDiffs extends React.Component {
                 },
                 toolbar: {
                     autoSelected: 'zoom'
-                }
+                },
+                animations: { enabled: false}
             },
             stroke: {
                 curve: 'smooth'
