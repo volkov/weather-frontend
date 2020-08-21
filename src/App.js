@@ -88,7 +88,9 @@ class RenderDiffs extends React.Component {
             temperatureSeries: this.getSeries([], [], [], 'Temperature'),
             rainSeries: this.getSeries([], [], [], 'Rain'),
             temperatureOptions: this.getOptions(),
-            rainOptions: this.getOptions("mm in 3h")
+            rainOptions: this.getOptions("mm in 3h"),
+            loading: true,
+            error: false
         }
     }
 
@@ -156,11 +158,14 @@ class RenderDiffs extends React.Component {
             <>
                 <h1>{this.state.location}</h1>
                 <div>
-                    <div id="chart">
-
-                        <Chart options={this.state.temperatureOptions} series={this.state.temperatureSeries} type="area" height={350}/>
-                        <Chart options={this.state.rainOptions} series={this.state.rainSeries} type="area" height={350}/>
-                    </div>
+                    {
+                        this.state.loading ? (<Spinner/>) :
+                        this.state.error ? (<Alert status="error"><AlertIcon/>There was an error processing your request</Alert>) :
+                        <div id="chart">
+                            <Chart options={this.state.temperatureOptions} series={this.state.temperatureSeries} type="area" height={350}/>
+                            <Chart options={this.state.rainOptions} series={this.state.rainSeries} type="area" height={350}/>
+                        </div>
+                    }
                 </div>
             </>
         )
@@ -201,6 +206,12 @@ class RenderDiffs extends React.Component {
 
                     }
                 )
+            })
+            .catch(() => {
+                this.setState({error: true})
+            })
+            .finally(() => {
+                this.setState({loading: false})
             })
 
         fetch(`api/location/${this.id}`).then(response => response.json()).then(location => {
