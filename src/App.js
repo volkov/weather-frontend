@@ -94,8 +94,10 @@ class RenderDiffs extends React.Component {
             diffs: [],
             temperatureSeries: this.getSeries([], [], [], 'Temperature'),
             rainSeries: this.getSeries([], [], [], 'Rain'),
+            cloudsSeries: this.getSeries([], [], [], 'Clouds'),
             temperatureOptions: this.getOptions(),
             rainOptions: this.getOptions("mm in 3h"),
+            cloudsOptions: this.getOptions("%"),
             loading: true,
             error: false
         }
@@ -171,6 +173,7 @@ class RenderDiffs extends React.Component {
                         <div id="chart">
                             <Chart options={this.state.temperatureOptions} series={this.state.temperatureSeries} type="area" height={350}/>
                             <Chart options={this.state.rainOptions} series={this.state.rainSeries} type="area" height={350}/>
+                            <Chart options={this.state.cloudsOptions} series={this.state.cloudsSeries} type="area" height={350}/>
                         </div>
                     }
                 </div>
@@ -209,7 +212,17 @@ class RenderDiffs extends React.Component {
                         ), forecast3.map(
                             weather =>
                                 [weather.timestamp, weather.rain]
-                        ), 'Rain')
+                        ), 'Rain'),
+                        cloudsSeries: this.getSeries(real.map(
+                            weather =>
+                                [weather.timestamp, weather.clouds]
+                        ), forecast.map(
+                            weather =>
+                                [weather.timestamp, weather.clouds]
+                        ), forecast3.map(
+                            weather =>
+                                [weather.timestamp, weather.clouds]
+                        ), 'Clouds')
 
                     }
                 )
