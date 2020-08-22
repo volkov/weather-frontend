@@ -53,7 +53,7 @@ class RenderLocations extends React.Component {
         return (<div>
             {
                 this.state.loading ? (<Spinner/>) :
-                this.state.error ? (<Alert status="error"><AlertIcon/>There was an error processing your request</Alert>) :
+                this.state.error ? (<Alert status="error"><AlertIcon/>There was an error processing your request: {this.state.errorMessage}</Alert>) :
                 this.state.items.map(item => (
                     <h1><Link to={`${item.id}`} color="teal.500" as={ReactLink}>{item.name}</Link></h1>
                 ))
@@ -63,12 +63,19 @@ class RenderLocations extends React.Component {
 
     componentDidMount () {
         fetch("api/locations")
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`Server answered ${response.status} ${response.statusText}`)
+                }
+                return response
+            })
             .then(response => response.json())
             .then(locations => {
                 this.setState({items: locations})
             })
-            .catch(() => {
-                this.setState({error: true})
+            .catch((ex) => {
+                this.setState({error: true, errorMessage: ex.message})
+                console.log(ex)
             })
             .finally(() => {
                 this.setState({loading: false})
